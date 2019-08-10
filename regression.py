@@ -78,7 +78,7 @@ class LinearRegression:
 
 
 def main():
-    data = pd.read_csv("E:/coding-python/machine_learning/test.csv")
+    data = pd.read_csv("E:/coding-python/machine-learning/test.csv")
     data = data / 30
     x_train = data['x'].values
     y_train = data['y'].values
