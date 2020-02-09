@@ -5,6 +5,7 @@ from numpy import mat
 from numpy import random
 import matplotlib.pyplot as plt
 import pandas as pd
+import math
 
 class LinearRegression:
 
@@ -74,6 +75,40 @@ class LinearRegression:
                 self.weight[k,0] = w_k
         return self.weight
 
+    def lwlr(self,x,X,Y,k):
+        # print(X)
+        z = X
+        X = np.mat(X)
+        Y = np.mat(Y)
+        X = X.T
+        Y = Y.T
+        m,n = np.shape(X)
+        print(m)
+        X = np.hstack((np.mat(np.ones((m, 1))),X))
+        print(X.shape)
+        # print(m)
+        # 创建针对x的权重矩阵
+        W = np.matrix(np.zeros((m, m)))
+        for i in range(m):
+            # print(X[i])
+            xi = np.array(z[i])
+            # print(xi)
+            x = np.array(x)
+            W[i, i] = math.exp((np.linalg.norm(x - xi))/(-2*k**2))
+        # 获取此点相应的回归系数
+        
+        # print(Y.shape)
+        # print(X.shape)
+        # print(W.shape)
+        xWx = X.T*W*X
+        # print(xWx.shape)
+        if np.linalg.det(xWx) == 0:
+            print('xWx is a singular matrix')
+            return
+        self.weight = xWx.I*X.T*W*Y
+        return self.weight
+
+
 
 
 
@@ -82,17 +117,20 @@ def main():
     data = data / 30
     x_train = data['x'].values
     y_train = data['y'].values
-
+    # print(x_train)
     regression =  LinearRegression()
-    #基础线性回归
+    # 基础线性回归
     # regression.train(x_train, y_train)
     # regression.plot_lr(x_train, y_train)
     #岭回归
     # regression.ridge_regression(x_train,y_train)
     # regression.plot_lr(x_train, y_train)
     #lasso回归
-    regression.lasso_regression(x_train,y_train)
-    regression.plot_lr(x_train,y_train)
+    # regression.lasso_regression(x_train,y_train)
+    # regression.plot_lr(x_train,y_train)
+    #局部加权线性回归
+    regression.lwlr(0.5, x_train, y_train, 0.1)
+    regression.plot_lr(x_train, y_train)
 
 
 if __name__ == '__main__':
